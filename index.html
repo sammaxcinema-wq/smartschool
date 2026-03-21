@@ -3,35 +3,841 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primary and Secondary Curriculum Classes Management</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <title>SmartSchool Management System - Kenya Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --secondary: #3f51b5;
+            --accent: #667eea;
+            --success: #4CAF50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --light: #f5f5f5;
+            --white: #ffffff;
+            --dark: #333333;
+            --border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* ==================== HEADER ==================== */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 30px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        header nav {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        header nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        header nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ==================== MAIN CONTENT ==================== */
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: var(--white);
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2em;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 15px;
+        }
+
+        section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        /* ==================== BUTTONS ==================== */
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(63, 81, 181, 0.4);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #da190b;
+            transform: scale(1.05);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+            flex: 1;
+        }
+
+        /* ==================== STREAMS GRID ==================== */
+        .streams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 25px;
+        }
+
+        .stream {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .stream:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .stream h4 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+
+        .stream button {
+            background-color: var(--white);
+            color: var(--accent);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .stream button:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.02);
+        }
+
+        /* ==================== CLASS CARDS ==================== */
+        .primary-classes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .class-card {
+            background: var(--white);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .class-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(63, 81, 181, 0.2);
+            border-color: var(--accent);
+        }
+
+        .class-card h4 {
+            color: var(--primary);
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+
+        .class-streams-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .class-streams-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.05em;
+        }
+
+        .class-streams-list li:last-child {
+            border-bottom: 2px solid var(--secondary);
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+        }
+
+        .stream-label {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stream-count {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .teacher-info {
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 2px solid var(--secondary);
+            color: #555;
+            font-size: 1em;
+        }
+
+        .teacher-info strong {
+            color: var(--primary);
+        }
+
+        .card-actions {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .card-actions button {
+            margin: 0;
+        }
+
+        /* ==================== FORMS & MODALS ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--primary);
+        }
+
+        .modal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .modal-form label {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.05em;
+        }
+
+        .modal-form input,
+        .modal-form select {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
+        }
+
+        .modal-form button {
+            background-color: var(--secondary);
+            color: var(--white);
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .modal-form button:hover {
+            background-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        /* ==================== FOOTER ==================== */
+        footer {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+            border-top: 3px solid var(--accent);
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1.05em;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            header nav ul {
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            section {
+                padding: 25px;
+            }
+
+            section h2 {
+                font-size: 1.6em;
+            }
+
+            .streams,
+            .primary-classes {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20% auto;
+                padding: 25px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.95em;
+            }
+
+            main {
+                margin: 20px auto;
+            }
+        }
+
+        /* ==================== UTILITY CLASSES ==================== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 40px;
+            font-size: 1.1em;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <body>
+    <!-- ==================== HEADER ==================== -->
     <header>
-        <h1>Curriculum Classes Management System</h1>
+        <h1>🎓 SmartSchool Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="#primary">📚 Primary Curriculum</a></li>
+                <li><a href="#secondary">📖 Secondary Curriculum</a></li>
+                <li><a href="#streams">⚙️ Stream Management</a></li>
+            </ul>
+        </nav>
     </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
     <main>
-        <section>
-            <h2>Add Class</h2>
-            <form id="classForm">
-                <input type="text" id="className" placeholder="Class Name" required>
-                <select id="stream">
-                    <option value="West">West</option>
-                    <option value="East">East</option>
-                    <option value="North">North</option>
-                    <option value="South">South</option>
-                </select>
-                <button type="submit">Add Class</button>
-            </form>
+        <!-- PRIMARY CURRICULUM SECTION -->
+        <section id="primary">
+            <h2>📚 Primary Curriculum Classes (Grade 7-9)</h2>
+            <p>Kenya Curriculum Framework - Each class is divided into 4 streams: West, East, North, and South</p>
+            <button class="btn-primary" onclick="addPrimaryClass()">➕ Add Primary Class</button>
+            <div class="primary-classes" id="primaryClassesList">
+                <div class="no-data">Loading classes...</div>
+            </div>
         </section>
-        <section>
-            <h2>Classes List</h2>
-            <ul id="classesList"></ul>
+
+        <!-- SECONDARY CURRICULUM SECTION -->
+        <section id="secondary">
+            <h2>📖 Secondary Curriculum Classes (Form 1-4)</h2>
+            <p>Kenya Curriculum Framework - Each class is divided into 4 streams: West, East, North, and South</p>
+            <button class="btn-primary" onclick="addSecondaryClass()">➕ Add Secondary Class</button>
+            <div class="primary-classes" id="secondaryClassesList">
+                <div class="no-data">Loading classes...</div>
+            </div>
+        </section>
+
+        <!-- STREAM MANAGEMENT SECTION -->
+        <section id="streams">
+            <h2>⚙️ Manage Classes by Stream</h2>
+            
+            <h3 style="color: var(--secondary); margin: 30px 0 20px 0; font-size: 1.5em;">Primary Curriculum Streams</h3>
+            <div class="streams">
+                <div class="stream">
+                    <h4>🌅 West Stream</h4>
+                    <button onclick="manageStream('primary', 'west')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>🌇 East Stream</h4>
+                    <button onclick="manageStream('primary', 'east')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>⬆️ North Stream</h4>
+                    <button onclick="manageStream('primary', 'north')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>⬇️ South Stream</h4>
+                    <button onclick="manageStream('primary', 'south')">Manage Classes</button>
+                </div>
+            </div>
+
+            <h3 style="color: var(--secondary); margin: 40px 0 20px 0; font-size: 1.5em;">Secondary Curriculum Streams</h3>
+            <div class="streams">
+                <div class="stream">
+                    <h4>🌅 West Stream</h4>
+                    <button onclick="manageStream('secondary', 'west')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>🌇 East Stream</h4>
+                    <button onclick="manageStream('secondary', 'east')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>⬆️ North Stream</h4>
+                    <button onclick="manageStream('secondary', 'north')">Manage Classes</button>
+                </div>
+                <div class="stream">
+                    <h4>⬇️ South Stream</h4>
+                    <button onclick="manageStream('secondary', 'south')">Manage Classes</button>
+                </div>
+            </div>
         </section>
     </main>
+
+    <!-- ==================== MODAL FOR ADDING/EDITING CLASSES ==================== -->
+    <div id="classModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-bottom: 10px;">Add/Edit Class</h2>
+            <p style="color: #666; margin-bottom: 20px;">Create or modify a class with stream information</p>
+            <form class="modal-form" id="classForm">
+                <label for="className">Class Name (e.g., Grade 7, Form 1): *</label>
+                <input type="text" id="className" placeholder="Enter class name" required>
+                
+                <label for="westCount">🌅 West Stream - Number of Students:</label>
+                <input type="number" id="westCount" placeholder="0" value="0" min="0" max="100">
+                
+                <label for="eastCount">🌇 East Stream - Number of Students:</label>
+                <input type="number" id="eastCount" placeholder="0" value="0" min="0" max="100">
+                
+                <label for="northCount">⬆️ North Stream - Number of Students:</label>
+                <input type="number" id="northCount" placeholder="0" value="0" min="0" max="100">
+                
+                <label for="southCount">⬇️ South Stream - Number of Students:</label>
+                <input type="number" id="southCount" placeholder="0" value="0" min="0" max="100">
+                
+                <label for="formTeacher">Form Teacher (Class Teacher): *</label>
+                <input type="text" id="formTeacher" placeholder="Enter teacher's full name" required>
+                
+                <button type="submit">💾 Save Class</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
     <footer>
-        <p>&copy; 2026 SmartSchool</p>
+        <p>&copy; 2026 SmartSchool Management System | Kenya Curriculum Framework | All Rights Reserved</p>
     </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ==================== DATABASE ====================
+        let classesDB = {
+            primary: [
+                { id: 1, name: "Grade 7", west: 35, east: 32, north: 38, south: 33, teacher: "Jane Kipchoge" },
+                { id: 2, name: "Grade 8", west: 36, east: 34, north: 35, south: 35, teacher: "David Kiplagat" },
+                { id: 3, name: "Grade 9", west: 30, east: 32, north: 31, south: 29, teacher: "Mary Kipngetich" }
+            ],
+            secondary: [
+                { id: 1, name: "Form 1", west: 40, east: 38, north: 42, south: 39, teacher: "John Mwangi" },
+                { id: 2, name: "Form 2", west: 35, east: 37, north: 36, south: 38, teacher: "Sarah Njoroge" },
+                { id: 3, name: "Form 3", west: 32, east: 34, north: 33, south: 31, teacher: "Ali Odhiambo" },
+                { id: 4, name: "Form 4", west: 38, east: 36, north: 37, south: 35, teacher: "Grace Mutua" }
+            ]
+        };
+
+        let currentCurriculum = 'primary';
+        let editingId = null;
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('DOMContentLoaded', function() {
+            displayClasses('primary');
+            displayClasses('secondary');
+        });
+
+        // ==================== DISPLAY CLASSES ====================
+        function displayClasses(curriculum) {
+            const container = document.getElementById(curriculum + 'ClassesList');
+            const classes = classesDB[curriculum];
+            
+            if (classes.length === 0) {
+                container.innerHTML = '<div class="no-data">No classes added yet. Click the button above to add one!</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            classes.forEach(cls => {
+                const totalStudents = cls.west + cls.east + cls.north + cls.south;
+                const card = document.createElement('div');
+                card.className = 'class-card fade-in';
+                card.innerHTML = `
+                    <h4>${cls.name}</h4>
+                    <ul class="class-streams-list">
+                        <li>
+                            <span class="stream-label">🌅 West Stream</span>
+                            <span class="stream-count">${cls.west}</span>
+                        </li>
+                        <li>
+                            <span class="stream-label">🌇 East Stream</span>
+                            <span class="stream-count">${cls.east}</span>
+                        </li>
+                        <li>
+                            <span class="stream-label">⬆️ North Stream</span>
+                            <span class="stream-count">${cls.north}</span>
+                        </li>
+                        <li>
+                            <span class="stream-label">⬇️ South Stream</span>
+                            <span class="stream-count">${cls.south}</span>
+                        </li>
+                        <li>
+                            <span style="font-size: 1.1em;">📊 Total Students</span>
+                            <span class="stream-count">${totalStudents}</span>
+                        </li>
+                    </ul>
+                    <div class="teacher-info">
+                        <strong>👨‍🏫 Form Teacher:</strong> ${cls.teacher}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-success btn-small" onclick="editClass('${curriculum}', ${cls.id})">✏️ Edit</button>
+                        <button class="btn-danger btn-small" onclick="deleteClass('${curriculum}', ${cls.id})">🗑️ Delete</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ==================== ADD CLASS FUNCTIONS ====================
+        function addPrimaryClass() {
+            currentCurriculum = 'primary';
+            editingId = null;
+            resetForm();
+            openModal();
+        }
+
+        function addSecondaryClass() {
+            currentCurriculum = 'secondary';
+            editingId = null;
+            resetForm();
+            openModal();
+        }
+
+        // ==================== EDIT CLASS ====================
+        function editClass(curriculum, classId) {
+            currentCurriculum = curriculum;
+            editingId = classId;
+            
+            const cls = classesDB[curriculum].find(c => c.id === classId);
+            if (cls) {
+                document.getElementById('className').value = cls.name;
+                document.getElementById('westCount').value = cls.west;
+                document.getElementById('eastCount').value = cls.east;
+                document.getElementById('northCount').value = cls.north;
+                document.getElementById('southCount').value = cls.south;
+                document.getElementById('formTeacher').value = cls.teacher;
+                openModal();
+            }
+        }
+
+        // ==================== DELETE CLASS ====================
+        function deleteClass(curriculum, classId) {
+            if (confirm('⚠️ Are you sure you want to delete this class? This action cannot be undone.')) {
+                const index = classesDB[curriculum].findIndex(c => c.id === classId);
+                if (index > -1) {
+                    classesDB[curriculum].splice(index, 1);
+                    displayClasses(curriculum);
+                    showNotification('✅ Class deleted successfully!', 'success');
+                }
+            }
+        }
+
+        // ==================== MANAGE STREAM ====================
+        function manageStream(curriculum, stream) {
+            const classes = classesDB[curriculum];
+            const streamClasses = classes.map(cls => `${cls.name} (${cls[stream]} students)`);
+            
+            if (streamClasses.length === 0) {
+                alert(`No classes in ${stream.toUpperCase()} stream for ${curriculum} curriculum`);
+            } else {
+                const message = `${stream.toUpperCase()} Stream - ${curriculum.toUpperCase()} Curriculum:\n\n${streamClasses.join('\n')}`;
+                alert(message);
+            }
+        }
+
+        // ==================== MODAL FUNCTIONS ====================
+        function openModal() {
+            document.getElementById('classModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('classModal').style.display = 'none';
+            resetForm();
+            editingId = null;
+        }
+
+        function resetForm() {
+            document.getElementById('classForm').reset();
+            document.getElementById('westCount').value = '0';
+            document.getElementById('eastCount').value = '0';
+            document.getElementById('northCount').value = '0';
+            document.getElementById('southCount').value = '0';
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        document.getElementById('classForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('className').value.trim();
+            const west = parseInt(document.getElementById('westCount').value) || 0;
+            const east = parseInt(document.getElementById('eastCount').value) || 0;
+            const north = parseInt(document.getElementById('northCount').value) || 0;
+            const south = parseInt(document.getElementById('southCount').value) || 0;
+            const teacher = document.getElementById('formTeacher').value.trim();
+            
+            if (!name || !teacher) {
+                alert('❌ Please fill in all required fields!');
+                return;
+            }
+
+            if (editingId) {
+                // Update existing class
+                const cls = classesDB[currentCurriculum].find(c => c.id === editingId);
+                if (cls) {
+                    cls.name = name;
+                    cls.west = west;
+                    cls.east = east;
+                    cls.north = north;
+                    cls.south = south;
+                    cls.teacher = teacher;
+                    showNotification('✅ Class updated successfully!', 'success');
+                }
+            } else {
+                // Add new class
+                const newClass = {
+                    id: Date.now(),
+                    name: name,
+                    west: west,
+                    east: east,
+                    north: north,
+                    south: south,
+                    teacher: teacher
+                };
+                classesDB[currentCurriculum].push(newClass);
+                showNotification('✅ Class added successfully!', 'success');
+            }
+            
+            displayClasses(currentCurriculum);
+            closeModal();
+        });
+
+        // ==================== MODAL CLOSE ON OUTSIDE CLICK ====================
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('classModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // ==================== NOTIFICATION FUNCTION ====================
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 6px;
+                font-weight: bold;
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+                ${type === 'success' ? 'background: #4CAF50; color: white;' : 'background: #3f51b5; color: white;'}
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
