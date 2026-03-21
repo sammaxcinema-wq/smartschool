@@ -1,59 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Smart School</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primary and Secondary Curriculum Classes Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Classes</a></li>  <!-- New Classes section in sidebar navigation -->
-        </ul>
-    </nav>
-    <div id="classes-panel">
-        <h2>Classes</h2>
-        <div class="class-streams">
-            <div class="class">
-                <h3>Class 1</h3>
-                <ul>
-                    <li>West</li>
-                    <li>East</li>
-                    <li>North</li>
-                    <li>South</li>
-                </ul>
-            </div>
-            <div class="class">
-                <h3>Class 2</h3>
-                <ul>
-                    <li>West</li>
-                    <li>East</li>
-                    <li>North</li>
-                    <li>South</li>
-                </ul>
-            </div>
-            <!-- Add more classes as needed -->
-        </div>
-        <button id="manage-classes-btn">Manage Classes</button>
-    </div>
-    <div id="classes-modal" style="display:none;">
-        <h2>Manage Classes</h2>
-        <!-- Modal content for adding/editing classes -->
-        <input type="text" id="class-name" placeholder="Class Name">
-        <button id="add-class-btn">Add Class</button>
-        <button onclick="closeModal()">Close</button>
-    </div>
-    <script>
-        function openModal() {
-            document.getElementById('classes-modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('classes-modal').style.display = 'none';
-        }
-
-        document.getElementById('manage-classes-btn').addEventListener('click', openModal);
-        // Add functionality to manage classes here
-    </script>
+    <header>
+        <h1>Curriculum Classes Management System</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Add Class</h2>
+            <form id="classForm">
+                <input type="text" id="className" placeholder="Class Name" required>
+                <select id="stream">
+                    <option value="West">West</option>
+                    <option value="East">East</option>
+                    <option value="North">North</option>
+                    <option value="South">South</option>
+                </select>
+                <button type="submit">Add Class</button>
+            </form>
+        </section>
+        <section>
+            <h2>Classes List</h2>
+            <ul id="classesList"></ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 SmartSchool</p>
+    </footer>
 </body>
 </html>
