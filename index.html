@@ -2,494 +2,485 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>Workspace Hub | Multi‑App UX Engine</title>
-  <!-- Tailwind + FontAwesome (vector icons) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+  <title>Workspace Hub | Multi‑App UX Platform</title>
+  <!-- Tailwind CSS + FontAwesome (pure vector icons) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    /* global reset & custom property integration */
+    /* custom variables and overrides */
     :root {
       --brand-primary: #22C55E;
-      --brand-primary-hover: #16A34A;
-      --brand-surface: #F8FAFC;
+      --brand-hover: #16A34A;
+      --brand-rgb: 34, 197, 94;
     }
     * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    body { background: #EFF3F8; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
-    .device-frame {
-      width: 390px;
-      height: 844px;
+    body { background: #F1F5F9; }
+    /* responsive container: on mobile full width, on desktop max-width with side margins */
+    .app-responsive {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
       background: white;
-      border-radius: 44px;
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.15);
       overflow: hidden;
-      position: relative;
-      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-      display: flex;
-      flex-direction: column;
     }
+    /* hide scrollbar for categories */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    /* custom range slider */
-    input[type="range"].slider-step {
+    /* range slider */
+    input[type="range"].premium-slider {
       -webkit-appearance: none;
       background: #E2E8F0;
       height: 4px;
       border-radius: 10px;
     }
-    input[type="range"].slider-step:focus { outline: none; }
-    input[type="range"].slider-step::-webkit-slider-thumb {
+    input[type="range"].premium-slider:focus { outline: none; }
+    input[type="range"].premium-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 20px;
       height: 20px;
       border-radius: 50%;
       background: var(--brand-primary);
       border: 3px solid white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       cursor: pointer;
       transition: transform 0.1s;
     }
-    input[type="range"].slider-step::-webkit-slider-thumb:hover { transform: scale(1.2); }
-    .dynamic-brand-bg { background-color: var(--brand-primary); }
-    .dynamic-brand-bg-hover:hover { background-color: var(--brand-primary-hover); }
-    .dynamic-brand-text { color: var(--brand-primary); }
-    .dynamic-brand-ring:focus { ring-color: var(--brand-primary); }
-    .view-transition { transition: opacity 0.2s ease, transform 0.2s ease; }
+    input[type="range"].premium-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .brand-bg { background-color: var(--brand-primary); }
+    .brand-bg-hover:hover { background-color: var(--brand-hover); }
+    .brand-text { color: var(--brand-primary); }
+    .brand-ring:focus { ring-color: var(--brand-primary); }
+    /* smooth transitions */
+    .view-panel { transition: opacity 0.2s ease, transform 0.25s ease; }
+    /* product card hover */
+    .product-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px -12px rgba(0,0,0,0.1); }
+    @media (min-width: 1024px) {
+      .desktop-split { display: flex; flex-direction: row; gap: 2rem; align-items: flex-start; }
+      .marketplace-panel { flex: 1.3; }
+      .detail-panel { flex: 1; position: sticky; top: 1.5rem; }
+    }
   </style>
 </head>
-<body>
+<body class="p-4 md:p-6 antialiased">
 
-<div class="device-frame flex flex-col">
-  <!-- Status bar simulation -->
-  <div class="flex justify-between px-6 pt-4 text-[11px] text-slate-500 font-medium">
-    <span>9:41</span>
-    <span><i class="fas fa-signal"></i> <i class="fas fa-battery-full ml-1"></i></span>
-  </div>
-
-  <!-- header with theme switcher pills -->
-  <div class="px-5 pt-1 flex justify-between items-center">
+<div class="app-responsive bg-white">
+  <!-- Header area with tenant switcher -->
+  <div class="px-5 pt-6 pb-2 border-b border-slate-100 flex flex-wrap justify-between items-center gap-3">
     <div>
-      <h1 id="headerAppName" class="text-2xl font-black text-slate-800 tracking-tight">WorkHub Connect</h1>
-      <p id="headerAppSub" class="text-[11px] text-slate-400 font-medium">Find your ideal professional collaborative workspace</p>
+      <h1 id="headerAppName" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">WorkHub Connect</h1>
+      <p id="headerSubText" class="text-xs text-slate-400 font-medium mt-0.5">Find your ideal professional collaborative workspace</p>
     </div>
-    <div class="flex gap-1.5">
-      <button data-theme="workhub_connect" class="theme-pill text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">WorkHub</button>
-      <button data-theme="foodgo" class="theme-pill text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-600">Foodgo</button>
-      <button data-theme="maji_gas" class="theme-pill text-[10px] font-bold px-2 py-1 rounded-full bg-slate-100 text-slate-600">Maji&Gas</button>
+    <div class="flex gap-2">
+      <button data-theme="workhub_connect" class="theme-pill text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 shadow-sm">WorkHub</button>
+      <button data-theme="foodgo" class="theme-pill text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600">Foodgo</button>
+      <button data-theme="maji_gas" class="theme-pill text-xs font-bold px-3 py-1.5 rounded-full bg-slate-100 text-slate-600">Maji&Gas</button>
     </div>
   </div>
 
-  <!-- SEARCH + CATEGORY PILLS (dynamic) -->
-  <div class="px-5 mt-4">
-    <div class="relative">
-      <i class="fas fa-search absolute left-4 top-3 text-slate-400 text-sm"></i>
-      <input type="text" id="catalogSearch" placeholder="Search desks, rooms or water..." class="w-full bg-slate-50 border border-slate-200 text-sm py-2.5 pl-11 pr-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-opacity-30 dynamic-brand-ring shadow-sm">
-    </div>
-    <!-- category pills track -->
-    <div id="categoryPillsTrack" class="flex gap-2 overflow-x-auto no-scrollbar mt-4 pb-1"></div>
-  </div>
-
-  <!-- MAIN CONTAINER: two views (marketplace grid / configurator) -->
-  <div class="flex-1 overflow-hidden relative">
-    <!-- VIEW 1: Marketplace / Product Grid -->
-    <div id="viewMarketplace" class="absolute inset-0 overflow-y-auto no-scrollbar px-5 pt-4 pb-24 transition-all">
-      <div id="catalogDisplayGrid" class="grid grid-cols-2 gap-4"></div>
+  <!-- main responsive split (desktop: side-by-side, mobile: stacked) -->
+  <div class="desktop-split p-5 gap-6">
+    <!-- LEFT: Marketplace panel -->
+    <div class="marketplace-panel w-full space-y-5">
+      <!-- search bar -->
+      <div class="relative">
+        <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+        <input type="text" id="searchInput" placeholder="Search desks, rooms, water refills or burgers..." class="w-full bg-slate-50 border border-slate-200 text-sm py-3 pl-11 pr-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-opacity-30 brand-ring shadow-sm">
+      </div>
+      <!-- category pills (horizontal scroll) -->
+      <div id="categoryTrack" class="flex gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+      <!-- product grid (2 cols, 3 on large) -->
+      <div id="productGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </div>
 
-    <!-- VIEW 2: Configurator / Booking Panel (hidden by default) -->
-    <div id="viewConfigurator" class="absolute inset-0 bg-white overflow-y-auto no-scrollbar px-5 pt-2 pb-24 transform translate-x-full transition-transform duration-300">
-      <div class="flex items-center gap-3 mb-4">
-        <button id="actionBackToStore" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fas fa-arrow-left text-slate-600 text-sm"></i></button>
-        <h3 class="font-bold text-slate-700">Back to listings</h3>
-      </div>
-      <!-- hero visual (inline svg) -->
-      <div id="configHeroVisual" class="w-full h-32 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
-        <svg width="70" height="70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"/><path d="M12 15V21M8 11.5L12 14L16 11.5" stroke="currentColor" stroke-width="1.5"/></svg>
-      </div>
-      <h2 id="configTitle" class="text-xl font-extrabold text-slate-800">Loading...</h2>
-      <div class="flex items-center gap-2 mt-2 flex-wrap">
-        <div class="flex items-center gap-1 text-xs font-bold bg-slate-100 px-2 py-0.5 rounded-full"><span class="text-amber-500">★</span> <span id="configRating">4.8</span></div>
-        <div id="mpesaStatusBadge" class="flex items-center text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-bold"><i class="fas fa-mobile-alt mr-1"></i> M-PESA READY</div>
-        <div class="text-[10px] font-bold bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-md"><i class="fas fa-clock"></i> 15-30 min delivery</div>
-      </div>
-      <p id="configDesc" class="text-slate-500 text-xs mt-3 leading-relaxed"></p>
-      <!-- Modifier slider section -->
-      <div class="mt-5 bg-slate-50 p-4 rounded-2xl">
-        <div class="flex justify-between items-center mb-2">
-          <span id="configModifierHeaderLabel" class="text-xs font-bold text-slate-700 uppercase tracking-wide">Valve Type</span>
-          <span id="configSliderLabel" class="text-xs font-extrabold dynamic-brand-text bg-white px-3 py-0.5 rounded-full shadow-sm">Standard</span>
+    <!-- RIGHT: Product configurator / detail panel (hidden on mobile until selection) -->
+    <div id="configPanel" class="detail-panel w-full bg-white rounded-2xl border border-slate-100 shadow-lg overflow-hidden transition-all hidden md:block">
+      <div class="p-5 space-y-4">
+        <!-- back button (mobile only style, but we keep for both) -->
+        <button id="backToMarketBtn" class="md:hidden flex items-center gap-1 text-sm text-slate-500 mb-2"><i class="fas fa-arrow-left"></i> Back</button>
+        <!-- hero vector visual -->
+        <div id="heroVisual" class="w-full h-32 bg-slate-50 rounded-2xl flex items-center justify-center">
+          <svg width="70" height="70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-slate-400"><path d="M3 9L12 3L21 9L12 15L3 9Z" stroke="currentColor" stroke-width="1.5"/><path d="M12 15V21M8 11.5L12 14L16 11.5" stroke="currentColor" stroke-width="1.5"/></svg>
         </div>
-        <input type="range" id="configSlider" class="slider-step w-full" min="0" max="2" value="0" step="1">
-        <div class="flex justify-between text-[9px] font-semibold text-slate-400 mt-1.5 px-0.5">
-          <span>Level 1</span>
-          <span>Level 2</span>
-          <span>Level 3</span>
+        <h2 id="configTitle" class="text-xl font-extrabold text-slate-800">Loading...</h2>
+        <div class="flex flex-wrap gap-2">
+          <div class="flex items-center gap-1 text-xs font-bold bg-slate-100 px-2 py-0.5 rounded-full"><span class="text-amber-500">★</span> <span id="configRating">4.8</span></div>
+          <div id="mpesaBadge" class="hidden text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md"><i class="fas fa-mobile-alt mr-1"></i> M-PESA READY</div>
+          <div class="text-[10px] font-bold bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-md"><i class="fas fa-clock"></i> 15-30 min</div>
         </div>
+        <p id="configDesc" class="text-slate-500 text-xs leading-relaxed"></p>
+        <!-- modifier slider area -->
+        <div class="bg-slate-50 p-4 rounded-2xl">
+          <div class="flex justify-between items-center mb-2"><span id="modifierLabel" class="text-xs font-bold text-slate-700">Access Level</span><span id="sliderStepLabel" class="text-xs font-extrabold brand-text bg-white px-3 py-0.5 rounded-full shadow-sm">Standard</span></div>
+          <input type="range" id="modifierSlider" class="premium-slider w-full" min="0" max="2" value="0" step="1">
+          <div class="flex justify-between text-[10px] font-semibold text-slate-400 mt-1.5 px-0.5"><span>Level 1</span><span>Level 2</span><span>Level 3</span></div>
+        </div>
+        <!-- price + quantity row -->
+        <div class="flex justify-between items-center pt-2">
+          <div><span class="text-[10px] font-bold text-slate-400 uppercase">Total price</span><div id="totalPriceDisplay" class="text-2xl font-black text-slate-800">$0</div></div>
+          <div class="flex items-center bg-slate-100 border border-slate-200 rounded-2xl p-1 gap-4"><button id="decrementQty" class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 active:scale-95">-</button><span id="qtyValue" class="font-bold text-base w-5 text-center">1</span><button id="incrementQty" class="w-8 h-8 rounded-xl brand-bg text-white shadow-md active:scale-95">+</button></div>
+        </div>
+        <button id="checkoutBtn" class="w-full py-3.5 rounded-2xl font-extrabold text-white brand-bg brand-bg-hover transition-all shadow-md flex items-center justify-center gap-2">BOOK SPACE NOW</button>
       </div>
-      <!-- price + quantity row -->
-      <div class="flex justify-between items-center mt-6">
-        <div><span class="text-[10px] font-bold text-slate-400 uppercase">Total price</span><div id="configTotalPriceLabel" class="text-2xl font-black text-slate-800">$0</div></div>
-        <div class="flex items-center bg-slate-100 border border-slate-200 rounded-2xl p-1 gap-4"><button id="actionDecrementQty" class="w-8 h-8 rounded-xl bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 active:scale-95">-</button><span id="configQtyDisplay" class="font-bold text-base w-5 text-center">1</span><button id="actionIncrementQty" class="w-8 h-8 rounded-xl dynamic-brand-bg text-white shadow-md active:scale-95">+</button></div>
-      </div>
-      <!-- primary CTA -->
-      <button id="actionExecuteOrder" class="w-full mt-6 py-3.5 rounded-2xl font-extrabold text-white dynamic-brand-bg dynamic-brand-bg-hover transition-all shadow-md flex items-center justify-center gap-2">BOOK SPACE NOW</button>
-      <p class="text-center text-[10px] text-slate-400 mt-3">Free cancellation up to 1 hour before booking</p>
     </div>
   </div>
 
-  <!-- Bottom Tab Bar (static UI) -->
-  <div class="h-16 bg-white/95 backdrop-blur-sm border-t border-slate-100 flex justify-around items-center px-4 text-slate-400">
-    <i class="fas fa-home text-teal-500 text-xl"></i>
-    <i class="fas fa-compass text-xl"></i>
-    <i class="fas fa-heart text-xl"></i>
-    <i class="fas fa-comment-dots text-xl"></i>
-    <i class="fas fa-user text-xl"></i>
+  <!-- Mobile bottom nav (simple) -->
+  <div class="md:hidden flex justify-around items-center py-3 border-t border-slate-100 text-slate-400 text-lg">
+    <i class="fas fa-home brand-text"></i><i class="fas fa-heart"></i><i class="fas fa-user"></i>
   </div>
 </div>
 
-<!-- M-PESA Async Modal Overlay -->
+<!-- M-PESA Async Modal Overlay (global) -->
 <div id="paymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden transition-all">
   <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl">
     <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-mobile-alt text-emerald-600 text-3xl"></i></div>
     <h3 class="text-xl font-bold">STK Push Sent</h3>
     <p class="text-slate-500 text-sm mt-2">Check your M-PESA phone and enter PIN to complete transaction.</p>
-    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-6 overflow-hidden"><div id="modalProgress" class="bg-emerald-500 h-full w-0 transition-all duration-5000 ease-linear"></div></div>
-    <button id="closeModalBtn" class="mt-6 text-slate-400 text-sm font-medium">Cancel Transaction</button>
+    <div class="w-full bg-slate-100 h-1.5 rounded-full mt-6 overflow-hidden"><div id="progressFill" class="bg-emerald-500 h-full w-0 transition-all duration-[5000ms] linear"></div></div>
+    <button id="cancelPaymentBtn" class="mt-6 text-slate-400 text-sm font-medium">Cancel Transaction</button>
   </div>
 </div>
 
 <script>
-  (function(){
-    // ------------------- MULTI-APP PROFILES (ZERO EXTERNAL IMAGES) -------------------
-    const PROFILES = {
-      maji_gas: {
-        appName: "Maji & Gas",
-        subText: "NyumbaniFresh · Fast delivery to your doorstep",
-        currency: "KSh ",
-        rateSuffix: "",
-        primaryColor: "#0A9396",
-        hoverColor: "#005F73",
-        checkoutLabel: "ORDER VIA M-PESA",
-        showMpesaBadge: true,
-        modifierLabel: "Valve / System Type",
-        categories: ["All Items", "Water Refills", "LPG Gas", "Accessories"],
-        catalog: [
-          { id: "mg1", name: "20L Pure Water Refill", cat: "Water Refills", basePrice: 350, rating: 4.9, desc: "Ozone filtered, BPA-free container." },
-          { id: "mg2", name: "6kg Gas Cylinder", cat: "LPG Gas", basePrice: 1250, rating: 4.7, desc: "Portable certified safety valve." },
-          { id: "mg3", name: "13kg Gas Refill", cat: "LPG Gas", basePrice: 1540, rating: 4.8, desc: "Household LPG, KEBS approved." }
-        ],
-        steps: [
-          { label: "Standard Joint", offset: 0 },
-          { label: "Threaded Premium", offset: 200 },
-          { label: "Industrial Gauge", offset: 450 }
-        ]
-      },
-      foodgo: {
-        appName: "Foodgo",
-        subText: "Order your favourite food!",
-        currency: "$",
-        rateSuffix: "",
-        primaryColor: "#EF4444",
-        hoverColor: "#DC2626",
-        checkoutLabel: "ORDER NOW",
-        showMpesaBadge: false,
-        modifierLabel: "Spicy Level",
-        categories: ["All", "Combo", "Sliders", "Classic"],
-        catalog: [
-          { id: "fg1", name: "Cheeseburger Wendy's", cat: "All", basePrice: 8.24, rating: 4.9, desc: "Juicy beef patty, melted cheese." },
-          { id: "fg2", name: "Veggie Burger", cat: "Sliders", basePrice: 6.50, rating: 4.8, desc: "Fresh greens and organic tofu." },
-          { id: "fg3", name: "Fried Chicken Burger", cat: "Classic", basePrice: 7.99, rating: 4.6, desc: "Crispy buttermilk chicken." }
-        ],
-        steps: [
-          { label: "Mild Flavor", offset: 0 },
-          { label: "Medium Hot", offset: 0.5 },
-          { label: "Extreme Hot 🔥", offset: 1.2 }
-        ]
-      },
-      workhub_connect: {
-        appName: "WorkHub Connect",
-        subText: "Find your ideal professional collaborative workspace",
-        currency: "$",
-        rateSuffix: "/hr",
-        primaryColor: "#22C55E",
-        hoverColor: "#16A34A",
-        checkoutLabel: "BOOK SPACE NOW",
-        showMpesaBadge: false,
-        modifierLabel: "Access Clearance Level",
-        categories: ["All Spaces", "Dedicated", "Conference", "Private", "Open Spac."],
-        catalog: [
-          { id: "wh1", name: "WorkHub Connect Open Space", cat: "Open Spac.", basePrice: 8.00, rating: 4.8, desc: "1012 Ocean Avenue, NYC. Open desk with high-speed WiFi and ergonomic chair." },
-          { id: "wh2", name: "Executive Conference Unit", cat: "Conference", basePrice: 25.00, rating: 4.9, desc: "Premium boardroom with 4K display and video conferencing." },
-          { id: "wh3", name: "Private Focus Booth", cat: "Private", basePrice: 12.00, rating: 4.7, desc: "Soundproof single-person pod for deep work." }
-        ],
-        steps: [
-          { label: "Base Desk Access", offset: 0 },
-          { label: "Premium Shared Lounge", offset: 5 },
-          { label: "Full VIP Boardroom Pass", offset: 12 }
-        ]
-      }
-    };
-
-    // ---------- CORE STATE ENGINE ----------
-    let activeProfileKey = "workhub_connect";
-    let state = {
-      activeCategoryIdx: 0,
-      searchQuery: "",
-      selectedProductId: "",
-      quantity: 1,
-      sliderStep: 0,
-      favorites: new Set()
-    };
-
-    // DOM refs
-    let currentView = "marketplace"; // marketplace | configurator
-
-    // Helper: apply theme css variables
-    function applyTheme(profile) {
-      document.documentElement.style.setProperty('--brand-primary', profile.primaryColor);
-      document.documentElement.style.setProperty('--brand-primary-hover', profile.hoverColor);
-      document.getElementById("headerAppName").innerText = profile.appName;
-      document.getElementById("headerAppSub").innerText = profile.subText;
-      // optionally update mpesa badge
-      const mpesaBadgeDiv = document.getElementById("mpesaStatusBadge");
-      if(mpesaBadgeDiv) {
-        if(profile.showMpesaBadge) mpesaBadgeDiv.classList.remove("hidden");
-        else mpesaBadgeDiv.classList.add("hidden");
-      }
+  // ------------------- MULTI-TENANT PROFILES (FULL CONFIGURATION) -------------------
+  const PROFILES = {
+    workhub_connect: {
+      name: "WorkHub Connect",
+      tagline: "Find your ideal professional collaborative workspace",
+      currency: "$",
+      suffix: "/hr",
+      primary: "#22C55E",
+      hover: "#16A34A",
+      rgb: "34,197,94",
+      checkoutText: "BOOK SPACE NOW",
+      mpesaReady: false,
+      modifierLabel: "Access Clearance Level",
+      categories: ["All Spaces", "Dedicated", "Conference", "Private", "Open Spac."],
+      products: [
+        { id: "wh1", name: "WorkHub Connect Open Space", cat: "Open Spac.", basePrice: 8.00, rating: 4.8, desc: "1012 Ocean Avenue, New York. Shared desk with high-speed WiFi and ergonomic chair.", asset: "space" },
+        { id: "wh2", name: "Executive Conference Unit", cat: "Conference", basePrice: 25.00, rating: 4.9, desc: "Premium boardroom with 4K display and video conferencing.", asset: "boardroom" },
+        { id: "wh3", name: "Private Focus Booth", cat: "Private", basePrice: 12.00, rating: 4.7, desc: "Soundproof single-person pod for deep work.", asset: "pod" }
+      ],
+      steps: [
+        { label: "Base Desk Access", offset: 0 },
+        { label: "Premium Shared Lounge", offset: 5 },
+        { label: "Full VIP Pass", offset: 12 }
+      ]
+    },
+    foodgo: {
+      name: "Foodgo",
+      tagline: "Order your favourite food!",
+      currency: "$",
+      suffix: "",
+      primary: "#EF4444",
+      hover: "#DC2626",
+      rgb: "239,68,68",
+      checkoutText: "ORDER NOW",
+      mpesaReady: false,
+      modifierLabel: "Spicy Level",
+      categories: ["All", "Combo", "Sliders", "Classic"],
+      products: [
+        { id: "fg1", name: "Cheeseburger Wendy's Burger", cat: "All", basePrice: 8.24, rating: 4.9, desc: "Juicy beef patty, melted cheese, fresh lettuce.", asset: "burger" },
+        { id: "fg2", name: "Veggie Burger", cat: "Sliders", basePrice: 6.50, rating: 4.8, desc: "Fresh plant-based patty with crisp greens.", asset: "veggie" },
+        { id: "fg3", name: "Fried Chicken Burger", cat: "Classic", basePrice: 7.99, rating: 4.6, desc: "Crispy buttermilk chicken breast.", asset: "chicken" }
+      ],
+      steps: [
+        { label: "Mild", offset: 0 },
+        { label: "Medium Hot", offset: 0.5 },
+        { label: "Extreme Hot 🔥", offset: 1.2 }
+      ]
+    },
+    maji_gas: {
+      name: "Maji & Gas",
+      tagline: "Kenya Local · by NyumbaniFresh",
+      currency: "KSh ",
+      suffix: "",
+      primary: "#0A9396",
+      hover: "#005F73",
+      rgb: "10,147,150",
+      checkoutText: "ORDER VIA M-PESA",
+      mpesaReady: true,
+      modifierLabel: "Valve / System Type",
+      categories: ["All Items", "Water Refills", "LPG Gas", "Accessories"],
+      products: [
+        { id: "mg1", name: "13kg Gas Cylinder Refill", cat: "LPG Gas", basePrice: 1540, rating: 4.8, desc: "Standard household LPG, KEBS approved, double seal.", asset: "gas" },
+        { id: "mg2", name: "20L Pure Water Refill", cat: "Water Refills", basePrice: 350, rating: 4.9, desc: "Multi-stage purified water, BPA-free.", asset: "water" },
+        { id: "mg3", name: "6kg Gas Cylinder", cat: "LPG Gas", basePrice: 1250, rating: 4.7, desc: "Portable safety valve certified.", asset: "gas" }
+      ],
+      steps: [
+        { label: "Standard Click-on", offset: 0 },
+        { label: "Threaded Premium", offset: 200 },
+        { label: "Industrial Gauge", offset: 450 }
+      ]
     }
+  };
 
-    function getCurrentProfile() {
-      return PROFILES[activeProfileKey];
+  // ---------- STATE MANAGEMENT ----------
+  let currentTenant = "workhub_connect";
+  let appState = {
+    categoryIdx: 0,
+    searchQuery: "",
+    selectedProductId: "",
+    quantity: 1,
+    sliderStep: 0,
+    favorites: new Set(["wh1"])
+  };
+
+  // DOM elements
+  let productGrid, categoryTrack, searchInput, configPanel, backBtn, heroVis, configTitle, configRating, configDesc, modifierLabelSpan, sliderStepSpan, totalPriceSpan, qtySpan, checkoutBtn, mpesaBadge, modifierSlider;
+
+  // helper: apply theme
+  function applyTheme() {
+    const profile = PROFILES[currentTenant];
+    document.documentElement.style.setProperty('--brand-primary', profile.primary);
+    document.documentElement.style.setProperty('--brand-hover', profile.hover);
+    document.documentElement.style.setProperty('--brand-rgb', profile.rgb);
+    document.getElementById("headerAppName").innerText = profile.name;
+    document.getElementById("headerSubText").innerText = profile.tagline;
+    if (mpesaBadge) {
+      if (profile.mpesaReady) mpesaBadge.classList.remove("hidden");
+      else mpesaBadge.classList.add("hidden");
     }
+    if (checkoutBtn) checkoutBtn.innerText = profile.checkoutText;
+  }
 
-    function getCurrentProduct() {
-      const profile = getCurrentProfile();
-      return profile.catalog.find(p => p.id === state.selectedProductId) || profile.catalog[0];
-    }
+  function getCurrentProfile() { return PROFILES[currentTenant]; }
+  function getCurrentProduct() {
+    const profile = getCurrentProfile();
+    return profile.products.find(p => p.id === appState.selectedProductId) || profile.products[0];
+  }
 
-    // render categories pills
-    function renderCategories() {
-      const profile = getCurrentProfile();
-      const container = document.getElementById("categoryPillsTrack");
-      if (!container) return;
-      container.innerHTML = "";
-      profile.categories.forEach((cat, idx) => {
-        const active = state.activeCategoryIdx === idx;
-        const btn = document.createElement("button");
-        btn.className = `px-4 py-2 text-xs font-bold rounded-full transition whitespace-nowrap ${active ? "dynamic-brand-bg text-white shadow-sm" : "bg-slate-100 text-slate-500"}`;
-        btn.innerText = cat;
-        btn.addEventListener("click", () => {
-          state.activeCategoryIdx = idx;
-          renderCategories();
-          renderProductGrid();
-        });
-        container.appendChild(btn);
-      });
-    }
-
-    // product grid (vector preview svg)
-    function renderProductGrid() {
-      const profile = getCurrentProfile();
-      const grid = document.getElementById("catalogDisplayGrid");
-      if (!grid) return;
-      const selectedCategory = profile.categories[state.activeCategoryIdx];
-      let filtered = profile.catalog.filter(item => {
-        const matchCat = state.activeCategoryIdx === 0 || item.cat === selectedCategory;
-        const matchSearch = item.name.toLowerCase().includes(state.searchQuery.toLowerCase());
-        return matchCat && matchSearch;
-      });
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400 text-sm">No spaces match your criteria</div>`;
-        return;
-      }
-      grid.innerHTML = filtered.map(prod => {
-        const isFav = state.favorites.has(prod.id);
-        const isSelected = state.selectedProductId === prod.id;
-        return `
-          <div class="product-card bg-white border ${isSelected ? 'border-slate-700 ring-1 ring-slate-700/20' : 'border-slate-100'} p-3 rounded-3xl cursor-pointer transition-all hover:shadow-md" data-id="${prod.id}">
-            <div class="flex justify-between items-start">
-              <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-slate-400"><path d="M12 3L3 9L12 15L21 9L12 3Z" stroke="currentColor" stroke-width="1.2"/><path d="M12 15V21M8 11.5L12 14L16 11.5" stroke="currentColor" stroke-width="1.2"/></svg>
-              </div>
-              <button class="fav-trigger text-${isFav ? 'rose-500' : 'slate-300'} hover:text-rose-400 transition" data-id="${prod.id}"><i class="fas fa-heart text-sm"></i></button>
-            </div>
-            <div class="mt-2">
-              <h3 class="text-xs font-bold text-slate-800 truncate">${prod.name}</h3>
-              <div class="flex justify-between items-center mt-1">
-                <span class="text-[10px] font-bold text-slate-400">★ ${prod.rating}</span>
-                <span class="text-xs font-black dynamic-brand-text">${profile.currency}${prod.basePrice}${profile.rateSuffix}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      // attach card click & favorite events
-      document.querySelectorAll(".product-card").forEach(card => {
-        card.addEventListener("click", (e) => {
-          if(e.target.closest(".fav-trigger")) return;
-          const id = card.dataset.id;
-          if(id) {
-            state.selectedProductId = id;
-            renderProductGrid(); // highlight selection
-            openConfiguratorView();
-            syncConfiguratorUI();
-          }
-        });
-        const favBtn = card.querySelector(".fav-trigger");
-        if(favBtn) {
-          favBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const pid = favBtn.dataset.id;
-            if(state.favorites.has(pid)) state.favorites.delete(pid);
-            else state.favorites.add(pid);
-            renderProductGrid();
-            showToast(state.favorites.has(pid) ? "Added to favorites" : "Removed from favorites", "heart");
-          });
-        }
-      });
-    }
-
-    function openConfiguratorView() {
-      const marketplaceDiv = document.getElementById("viewMarketplace");
-      const configDiv = document.getElementById("viewConfigurator");
-      if(marketplaceDiv && configDiv) {
-        marketplaceDiv.classList.add("hidden");
-        configDiv.classList.remove("translate-x-full");
-        currentView = "configurator";
-      }
-    }
-
-    function closeConfigurator() {
-      const marketplaceDiv = document.getElementById("viewMarketplace");
-      const configDiv = document.getElementById("viewConfigurator");
-      if(marketplaceDiv && configDiv) {
-        marketplaceDiv.classList.remove("hidden");
-        configDiv.classList.add("translate-x-full");
-        currentView = "marketplace";
-      }
-    }
-
-    function syncConfiguratorUI() {
-      const profile = getCurrentProfile();
-      const product = getCurrentProduct();
-      if(!product) return;
-      document.getElementById("configTitle").innerText = product.name;
-      document.getElementById("configRating").innerText = product.rating.toFixed(1);
-      document.getElementById("configDesc").innerText = product.desc;
-      document.getElementById("configModifierHeaderLabel").innerText = profile.modifierLabel;
-      // steps & price
-      const stepObj = profile.steps[state.sliderStep] || profile.steps[0];
-      document.getElementById("configSliderLabel").innerText = stepObj.label;
-      document.getElementById("configSlider").value = state.sliderStep;
-      document.getElementById("configQtyDisplay").innerText = state.quantity;
-      const total = (product.basePrice + stepObj.offset) * state.quantity;
-      const formatted = profile.currency + total.toLocaleString(undefined, {minimumFractionDigits: profile.currency === "$" ? 2 : 0}) + profile.rateSuffix;
-      document.getElementById("configTotalPriceLabel").innerText = formatted;
-      const ctaBtn = document.getElementById("actionExecuteOrder");
-      if(ctaBtn) ctaBtn.innerText = profile.checkoutLabel;
-    }
-
-    function recomputeAndSync() {
-      syncConfiguratorUI();
-    }
-
-    // Async M-PESA modal simulation
-    let asyncTimeout = null;
-    function triggerMpesaPayment() {
-      const modal = document.getElementById("paymentModal");
-      const progress = document.getElementById("modalProgress");
-      if(!modal) return;
-      modal.classList.remove("hidden");
-      progress.style.width = "0%";
-      setTimeout(() => { progress.style.width = "100%"; }, 30);
-      if(asyncTimeout) clearTimeout(asyncTimeout);
-      asyncTimeout = setTimeout(() => {
-        modal.classList.add("hidden");
-        showToast("✅ Payment successful! Booking confirmed.", "check-circle");
-      }, 5000);
-      const cancelBtn = document.getElementById("closeModalBtn");
-      const oldCancel = cancelBtn.onclick;
-      cancelBtn.onclick = () => {
-        if(asyncTimeout) clearTimeout(asyncTimeout);
-        modal.classList.add("hidden");
-        showToast("Transaction cancelled", "times-circle");
-        cancelBtn.onclick = oldCancel;
-      };
-    }
-
-    function showToast(msg, icon = "info-circle") {
-      let toast = document.getElementById("dynamicToast");
-      if(!toast){
-        toast = document.createElement("div");
-        toast.id = "dynamicToast";
-        toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-5 py-2 rounded-full shadow-lg flex items-center gap-2 text-sm font-medium z-50 transition-all duration-200 pointer-events-none";
-        document.body.appendChild(toast);
-      }
-      toast.innerHTML = `<i class="fas fa-${icon} text-emerald-400 mr-1"></i> ${msg}`;
-      toast.classList.remove("opacity-0", "translate-y-2");
-      toast.classList.add("opacity-100", "translate-y-0");
-      setTimeout(() => {
-        toast.classList.add("opacity-0", "translate-y-2");
-      }, 2500);
-    }
-
-    // switch entire app theme + data
-    function switchAppProfile(profileKey) {
-      activeProfileKey = profileKey;
-      const profile = getCurrentProfile();
-      applyTheme(profile);
-      // reset state
-      state.activeCategoryIdx = 0;
-      state.searchQuery = "";
-      state.selectedProductId = profile.catalog[0]?.id || "";
-      state.quantity = 1;
-      state.sliderStep = 0;
-      state.favorites.clear();
-      renderCategories();
-      renderProductGrid();
-      if(currentView === "configurator") closeConfigurator();
-      syncConfiguratorUI();
-      showToast(`Switched to ${profile.appName}`, "palette");
-    }
-
-    // ---- EVENT BINDINGS ----
-    function bindEvents() {
-      document.getElementById("catalogSearch")?.addEventListener("input", (e) => {
-        state.searchQuery = e.target.value;
+  // Render categories
+  function renderCategories() {
+    const profile = getCurrentProfile();
+    categoryTrack.innerHTML = "";
+    profile.categories.forEach((cat, idx) => {
+      const btn = document.createElement("button");
+      btn.className = `px-4 py-2 text-xs font-bold rounded-full whitespace-nowrap transition ${appState.categoryIdx === idx ? "brand-bg text-white shadow-sm" : "bg-slate-100 text-slate-600"}`;
+      btn.innerText = cat;
+      btn.addEventListener("click", () => {
+        appState.categoryIdx = idx;
+        renderCategories();
         renderProductGrid();
       });
-      document.getElementById("actionBackToStore")?.addEventListener("click", () => closeConfigurator());
-      document.getElementById("configSlider")?.addEventListener("input", (e) => {
-        state.sliderStep = parseInt(e.target.value, 10);
-        syncConfiguratorUI();
+      categoryTrack.appendChild(btn);
+    });
+  }
+
+  // Render product grid
+  function renderProductGrid() {
+    const profile = getCurrentProfile();
+    const selectedCategoryName = profile.categories[appState.categoryIdx];
+    let filtered = profile.products.filter(p => {
+      const matchCat = appState.categoryIdx === 0 || p.cat === selectedCategoryName;
+      const matchSearch = p.name.toLowerCase().includes(appState.searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+    if (filtered.length === 0) {
+      productGrid.innerHTML = `<div class="col-span-2 text-center py-10 text-sm text-slate-400">No items found</div>`;
+      return;
+    }
+    productGrid.innerHTML = filtered.map(prod => {
+      const isSelected = appState.selectedProductId === prod.id;
+      const isFav = appState.favorites.has(prod.id);
+      return `
+        <div class="product-card bg-white border ${isSelected ? 'border-slate-800 ring-1 ring-slate-800/10' : 'border-slate-100'} p-3 rounded-2xl cursor-pointer transition-all" data-id="${prod.id}">
+          <div class="flex justify-between items-start">
+            <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center">
+              <i class="fas fa-${profile.currency === 'KSh ' ? 'tint' : (prod.asset === 'burger' ? 'hamburger' : 'building')} text-slate-400 text-xl"></i>
+            </div>
+            <button class="fav-trigger text-${isFav ? 'rose-500' : 'slate-300'} hover:text-rose-400 transition" data-id="${prod.id}"><i class="fas fa-heart"></i></button>
+          </div>
+          <div class="mt-2">
+            <h3 class="text-sm font-bold text-slate-800">${prod.name}</h3>
+            <div class="flex justify-between items-center mt-1">
+              <span class="text-[11px] font-bold text-slate-400">★ ${prod.rating}</span>
+              <span class="text-sm font-black brand-text">${profile.currency}${prod.basePrice}${profile.suffix}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+    // attach event listeners to cards and fav buttons
+    document.querySelectorAll(".product-card").forEach(card => {
+      card.addEventListener("click", (e) => {
+        if (e.target.closest(".fav-trigger")) return;
+        const id = card.dataset.id;
+        if (id) {
+          appState.selectedProductId = id;
+          appState.quantity = 1;
+          appState.sliderStep = 0;
+          renderProductGrid();
+          updateConfigurator();
+          // show config panel on mobile
+          if (window.innerWidth < 1024) {
+            configPanel.classList.remove("hidden");
+            document.querySelector(".marketplace-panel")?.classList.add("hidden");
+          }
+        }
       });
-      document.getElementById("actionIncrementQty")?.addEventListener("click", () => {
-        state.quantity++;
-        syncConfiguratorUI();
-      });
-      document.getElementById("actionDecrementQty")?.addEventListener("click", () => {
-        if(state.quantity > 1) state.quantity--;
-        syncConfiguratorUI();
-      });
-      document.getElementById("actionExecuteOrder")?.addEventListener("click", () => {
-        triggerMpesaPayment();
-      });
-      document.querySelectorAll(".theme-pill").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const theme = btn.dataset.theme;
-          if(theme && PROFILES[theme]) switchAppProfile(theme);
+      const favBtn = card.querySelector(".fav-trigger");
+      if (favBtn) {
+        favBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const pid = favBtn.dataset.id;
+          if (appState.favorites.has(pid)) appState.favorites.delete(pid);
+          else appState.favorites.add(pid);
+          renderProductGrid();
         });
+      }
+    });
+  }
+
+  function updateConfigurator() {
+    const profile = getCurrentProfile();
+    const product = getCurrentProduct();
+    if (!product) return;
+    configTitle.innerText = product.name;
+    configRating.innerText = product.rating.toFixed(1);
+    configDesc.innerText = product.desc;
+    modifierLabelSpan.innerText = profile.modifierLabel;
+    const stepObj = profile.steps[appState.sliderStep];
+    sliderStepSpan.innerText = stepObj.label;
+    modifierSlider.value = appState.sliderStep;
+    qtySpan.innerText = appState.quantity;
+    const total = (product.basePrice + stepObj.offset) * appState.quantity;
+    let formatted = profile.currency + total.toLocaleString(undefined, { minimumFractionDigits: profile.currency === "$" ? 2 : 0 }) + profile.suffix;
+    totalPriceSpan.innerText = formatted;
+  }
+
+  function recomputeFromConfigurator() {
+    updateConfigurator();
+  }
+
+  // M-PESA modal logic
+  let paymentTimeout = null;
+  function openMpesaModal() {
+    const modal = document.getElementById("paymentModal");
+    const progress = document.getElementById("progressFill");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+    progress.style.width = "0%";
+    setTimeout(() => { progress.style.width = "100%"; }, 30);
+    if (paymentTimeout) clearTimeout(paymentTimeout);
+    paymentTimeout = setTimeout(() => {
+      modal.classList.add("hidden");
+      alert("✅ Payment successful! Order confirmed.");
+      // optional: reset view
+      if (window.innerWidth < 1024) {
+        configPanel.classList.add("hidden");
+        document.querySelector(".marketplace-panel")?.classList.remove("hidden");
+      }
+    }, 5000);
+    const cancelBtn = document.getElementById("cancelPaymentBtn");
+    const oldHandler = cancelBtn.onclick;
+    cancelBtn.onclick = () => {
+      if (paymentTimeout) clearTimeout(paymentTimeout);
+      modal.classList.add("hidden");
+      cancelBtn.onclick = oldHandler;
+    };
+  }
+
+  // Switch tenant completely
+  function switchTenant(tenantKey) {
+    currentTenant = tenantKey;
+    const profile = PROFILES[tenantKey];
+    if (!profile) return;
+    applyTheme();
+    // reset state
+    appState.categoryIdx = 0;
+    appState.searchQuery = "";
+    appState.selectedProductId = profile.products[0].id;
+    appState.quantity = 1;
+    appState.sliderStep = 0;
+    renderCategories();
+    renderProductGrid();
+    updateConfigurator();
+    // reset UI visibility on desktop/mobile
+    if (window.innerWidth >= 1024) {
+      configPanel.classList.remove("hidden");
+      document.querySelector(".marketplace-panel")?.classList.remove("hidden");
+    } else {
+      configPanel.classList.add("hidden");
+      document.querySelector(".marketplace-panel")?.classList.remove("hidden");
+    }
+  }
+
+  // Event binding
+  function bindGlobalEvents() {
+    searchInput.addEventListener("input", (e) => {
+      appState.searchQuery = e.target.value;
+      renderProductGrid();
+    });
+    modifierSlider.addEventListener("input", (e) => {
+      appState.sliderStep = parseInt(e.target.value);
+      updateConfigurator();
+    });
+    document.getElementById("incrementQty")?.addEventListener("click", () => {
+      appState.quantity++;
+      updateConfigurator();
+    });
+    document.getElementById("decrementQty")?.addEventListener("click", () => {
+      if (appState.quantity > 1) appState.quantity--;
+      updateConfigurator();
+    });
+    checkoutBtn.addEventListener("click", () => {
+      const profile = getCurrentProfile();
+      if (profile.mpesaReady) openMpesaModal();
+      else alert(`Demo: ${profile.checkoutText} clicked. Total: ${totalPriceSpan.innerText}`);
+    });
+    backBtn.addEventListener("click", () => {
+      configPanel.classList.add("hidden");
+      document.querySelector(".marketplace-panel")?.classList.remove("hidden");
+    });
+    // tenant switcher buttons
+    document.querySelectorAll(".theme-pill").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const theme = btn.dataset.theme;
+        if (theme && PROFILES[theme]) switchTenant(theme);
       });
-    }
+    });
+    // window resize: handle desktop/mobile layout
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 1024) {
+        configPanel.classList.remove("hidden");
+        document.querySelector(".marketplace-panel")?.classList.remove("hidden");
+      } else {
+        if (!configPanel.classList.contains("hidden") && !document.querySelector(".marketplace-panel")?.classList.contains("hidden")) {
+          // on mobile, keep marketplace visible and config hidden until click
+          configPanel.classList.add("hidden");
+        }
+      }
+    });
+  }
 
-    function init() {
-      bindEvents();
-      switchAppProfile("workhub_connect");
-    }
+  // Initialize DOM refs and start
+  function init() {
+    productGrid = document.getElementById("productGrid");
+    categoryTrack = document.getElementById("categoryTrack");
+    searchInput = document.getElementById("searchInput");
+    configPanel = document.getElementById("configPanel");
+    backBtn = document.getElementById("backToMarketBtn");
+    configTitle = document.getElementById("configTitle");
+    configRating = document.getElementById("configRating");
+    configDesc = document.getElementById("configDesc");
+    modifierLabelSpan = document.getElementById("modifierLabel");
+    sliderStepSpan = document.getElementById("sliderStepLabel");
+    totalPriceSpan = document.getElementById("totalPriceDisplay");
+    qtySpan = document.getElementById("qtyValue");
+    checkoutBtn = document.getElementById("checkoutBtn");
+    mpesaBadge = document.getElementById("mpesaBadge");
+    modifierSlider = document.getElementById("modifierSlider");
+    if (!productGrid) return;
+    switchTenant("workhub_connect");
+    bindGlobalEvents();
+  }
 
-    init();
-    window.switchAppProfile = switchAppProfile; // dev console accessible
-  })();
+  init();
 </script>
 </body>
 </html>
